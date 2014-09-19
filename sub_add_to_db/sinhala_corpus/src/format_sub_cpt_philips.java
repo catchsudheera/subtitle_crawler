@@ -10,12 +10,17 @@ import java.util.regex.Pattern;
 /**
  * Created by dammina on 8/17/14.
  */
-public class format_sub_apocalypto {
+public class format_sub_cpt_philips {
     public static void main(String [] args){
-        new format_sub_apocalypto().format();
+        new format_sub_cpt_philips().format();
     }
+
     public void format(){
-        File file=new File("/home/dammina/Work/subtitles/Apocalypto.2006.1080p.Bluray.x264.anoXmous.srt");
+        File file=new File("/home/dammina/Work/subtitles/Captain.Phillips.2013.DVDRip.X264-SPARKS.srt");
+
+        String prev_line="";
+        String db_line="";
+
         try {
             Scanner scan = new Scanner(new BufferedReader(new FileReader(file)));
             String line="";
@@ -28,12 +33,11 @@ public class format_sub_apocalypto {
 
             Matcher m;
 
-            while(!line.equals("3")){
+            while(!line.equals("7")){
                 line=scan.nextLine();
             }
-            String prev_line="";
-            String db_line="";
-            while(!line.equals("451")){
+
+            while(!line.equals("1499")){
 
                 line = scan.nextLine();
 
@@ -48,6 +52,15 @@ public class format_sub_apocalypto {
                 if(line.contains("\"")){
                     line=line.replaceAll("\""," ");
                 }
+                if(line.contains("<i>")){
+                    line=line.replaceAll("<i>","");
+                }
+                if(line.contains("</i>")){
+                    line=line.replaceAll("</i>","");
+                }
+                if(line.contains("-")){
+                    line=line.replaceAll("-","");
+                }
                 if(line.contains("\'")){
                     line=line.replaceAll("\'"," ");
                 }
@@ -58,20 +71,27 @@ public class format_sub_apocalypto {
                     int index01=line.indexOf("...");
                     line = line.substring(0,index01)+line.substring(index01+3);
                 }
+                if(line.contains("..")){
+                    int index01=line.indexOf("..");
+                    line = line.substring(0,index01)+line.substring(index01+2);
+                }
                 if(line.contains(".")){
                     db_line = prev_line+line.substring(0,line.indexOf(".")+1);
+                    db_line = set_the_starting_point_of_string(db_line);
 //                    System.out.println(db_line);
                     write_to_DB(db_line);
                     prev_line = line.substring(line.indexOf(".")+1)+" ";
                 }
                 else if(line.contains("?")){
                     db_line=prev_line+line.substring(0,line.indexOf("?")+1);
+                    db_line = set_the_starting_point_of_string(db_line);
 //                    System.out.println(db_line);
                     write_to_DB(db_line);
                     prev_line = line.substring(line.indexOf("?")+1)+" ";
                 }
                 else if(line.contains("!")){
                     db_line=prev_line+line.substring(0,line.indexOf("!")+1);
+                    db_line = set_the_starting_point_of_string(db_line);
 //                    System.out.println(db_line);
                     write_to_DB(db_line);
                     prev_line = line.substring(line.indexOf("!")+1)+" ";
@@ -85,6 +105,20 @@ public class format_sub_apocalypto {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        catch (Exception ex){
+            System.out.println("## "+db_line);
+        }
+    }
+    public String set_the_starting_point_of_string(String dialogue){
+        int index=0;
+        int i=0;
+        char a='a';
+        while(a<128){
+            a=dialogue.charAt(i);
+            i++;
+        }
+        dialogue=dialogue.substring(i-1);
+        return dialogue;
     }
     public void write_to_DB(String dialogue){
         int index=0;
